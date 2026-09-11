@@ -1,17 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { cloudflare } from '@cloudflare/vite-plugin';
 
 export default defineConfig({
   plugins: [
     react(),
+    cloudflare(),
     VitePWA({
       registerType: 'autoUpdate',
-
       manifest: {
         name: 'ロト6管理アプリ',
         short_name: 'ロト6',
-        description: 'ロト6の購入履歴・当選結果・収支・予想を管理するアプリ',
+        description:
+          'ロト6の購入履歴・当選結果・収支・予想を管理するアプリ',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
