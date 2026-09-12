@@ -7,7 +7,7 @@ type PurchaseNumbers = [
   number
 ];
 
-type DrawNumbers = [
+export type DrawNumbers = [
   number,
   number,
   number,

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { checkLottery } from '../services/lotteryChecker';
+import { styles } from '../constants/styles.ts'
+import type {DrawNumbers} from '../services/lotteryChecker';
 
 type Purchase = {
   purchase_id: number;
@@ -13,6 +15,13 @@ type Purchase = {
   number_4: number;
   number_5: number;
   number_6: number;
+
+  mached_1: number;
+  mached_2: number;
+  mached_3: number;
+  mached_4: number;
+  mached_5: number;
+  mached_6: number;
 
   purchase_amount: number;
   win_rank: number | null;
@@ -77,14 +86,24 @@ function PurchaseHistory() {
         const result = resultsMap.get(purchase.draw_number);
 
         if (!result) {
-        return {
-            ...purchase,
-            win_rank: null,
-            prize_amount: 0,
-            matched_count: undefined,
-            bonus_matched: undefined,
-        };
+          return {
+              ...purchase,
+              win_rank: null,
+              prize_amount: 0,
+              matched_count: undefined,
+              bonus_matched: undefined,
+          };
         }
+
+        const winning: DrawNumbers = 
+        [
+            result.winning_number_1,
+            result.winning_number_2,
+            result.winning_number_3,
+            result.winning_number_4,
+            result.winning_number_5,
+            result.winning_number_6,
+        ];
 
         const checkResult = checkLottery(
         [
@@ -95,14 +114,7 @@ function PurchaseHistory() {
             purchase.number_5,
             purchase.number_6,
         ],
-        [
-            result.winning_number_1,
-            result.winning_number_2,
-            result.winning_number_3,
-            result.winning_number_4,
-            result.winning_number_5,
-            result.winning_number_6,
-        ],
+        winning,
         result.bonus_number,
         {
             prize_1: result.prize_1,
@@ -110,8 +122,14 @@ function PurchaseHistory() {
             prize_3: result.prize_3,
             prize_4: result.prize_4,
             prize_5: result.prize_5,
-        }
-        );
+        });
+
+        purchase.mached_1 = winning.includes(purchase.number_1) ? 1 : result.bonus_number === purchase.number_1 ? 2 : 0;
+        purchase.mached_2 = winning.includes(purchase.number_2) ? 1 : result.bonus_number === purchase.number_2 ? 2 : 0;
+        purchase.mached_3 = winning.includes(purchase.number_3) ? 1 : result.bonus_number === purchase.number_3 ? 2 : 0;
+        purchase.mached_4 = winning.includes(purchase.number_4) ? 1 : result.bonus_number === purchase.number_4 ? 2 : 0;
+        purchase.mached_5 = winning.includes(purchase.number_5) ? 1 : result.bonus_number === purchase.number_5 ? 2 : 0;
+        purchase.mached_6 = winning.includes(purchase.number_6) ? 1 : result.bonus_number === purchase.number_6 ? 2 : 0;
 
         return {
             ...purchase,
@@ -209,6 +227,15 @@ function PurchaseHistory() {
     await loadPurchases();
   };
 
+  const setColor = (mached: number) =>
+  {
+    return mached === 1 
+      ? '#00aaff'
+      : mached === 2
+        ? '#00ffaa'
+        : '#ffffff';
+  }
+
   return (
     <div>
       <h2>購入履歴登録</h2>
@@ -278,71 +305,76 @@ function PurchaseHistory() {
       {purchases.length === 0 ? (
         <p>購入履歴はありません。</p>
       ) : (
-        <table
-          style={{
-            borderCollapse: 'collapse',
-          }}
-        >
+        <table style={styles.table}>
         <thead>
             <tr>
-                <th>回号</th>
-                <th>購入日</th>
-                <th>購入番号</th>
-                <th>購入金額</th>
-                <th>一致数</th>
-                <th>ボーナス</th>
-                <th>当選等級</th>
-                <th>当選金額</th>
+                <th style={styles.th}>回号</th>
+                <th style={styles.th}>購入日</th>
+                <th colSpan ={6} style={styles.th}>購入番号</th>
+                <th style={styles.th}>購入金額</th>
+                <th style={styles.th}>一致数</th>
+                <th style={styles.th}>ボーナス</th>
+                <th style={styles.th}>当選等級</th>
+                <th style={styles.th}>当選金額</th>
             </tr>
         </thead>
 
         <tbody>
             {purchases.map((purchase) => (
                 <tr key={purchase.purchase_id}>
-                <td>{purchase.draw_number}</td>
+                  <td style={styles.td}>{purchase.draw_number}</td>
 
-                <td>{purchase.purchase_date}</td>
+                  <td style={styles.td}>{purchase.purchase_date}</td>
 
-                <td>
-                    {[
-                    purchase.number_1,
-                    purchase.number_2,
-                    purchase.number_3,
-                    purchase.number_4,
-                    purchase.number_5,
-                    purchase.number_6,
-                    ].join(' / ')}
-                </td>
+                  <td style={{...styles.td_num,backgroundColor: setColor(purchase.mached_1)}}>
+                    {purchase.number_1}
+                  </td>
+                  <td style={{...styles.td_num,backgroundColor: setColor(purchase.mached_2)}}>
+                      {purchase.number_2}
+                  </td>
+                  <td style={{...styles.td_num,backgroundColor: setColor(purchase.mached_3)}}>
+                      {purchase.number_3}
+                  </td>
+                  <td style={{...styles.td_num,backgroundColor: setColor(purchase.mached_4)}}>
+                      {purchase.number_4}
+                  </td>
+                  <td style={{...styles.td_num,backgroundColor: setColor(purchase.mached_5)}}>
+                      {purchase.number_5}
+                  </td>
+                  <td style={{...styles.td_num,backgroundColor: setColor(purchase.mached_6)}}>
+                      {purchase.number_6}
+                  </td>
+                      
 
-                <td>
-                    {purchase.purchase_amount.toLocaleString()}円
-                </td>
+                  <td style={styles.td}>
+                      {purchase.purchase_amount.toLocaleString()}円
+                  </td>
 
-                <td>
-                    {purchase.matched_count !== undefined
-                    ? `${purchase.matched_count}個`
-                    : '-'}
-                </td>
+                  <td style={styles.td}>
+                      {purchase.matched_count !== undefined
+                      ? `${purchase.matched_count}個`
+                      : '-'}
+                  </td>
 
-                <td>
-                    {purchase.bonus_matched === undefined
-                    ? '-'
-                    : purchase.bonus_matched
-                        ? '一致'
-                        : '不一致'}
-                </td>
+                  <td style={styles.td}>
+                      {purchase.bonus_matched === undefined
+                      ? '-'
+                      : purchase.bonus_matched
+                          ? '一致'
+                          : '不一致'}
+                  </td>
 
-                <td>
-                    {purchase.win_rank
-                    ? `${purchase.win_rank}等`
-                    : '－'}
-                </td>
+                  <td style={styles.td}>
+                      {purchase.win_rank
+                      ? `${purchase.win_rank}等`
+                      : '－'}
+                  </td>
 
-                <td>
-                    {purchase.prize_amount > 0
-                    ? `${purchase.prize_amount.toLocaleString()}円`
-                    : '－'}
-                </td>
+                  <td style={styles.td}>
+                      {purchase.prize_amount > 0
+                      ? `${purchase.prize_amount.toLocaleString()}円`
+                      : '－'}
+                  </td>
                 </tr>
             ))}
             </tbody>
