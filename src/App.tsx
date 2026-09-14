@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import PurchaseHistory from './pages/PurchaseHistory';
 import DrawResults from './pages/DrawResults';
 import { fetchLatestLoto6Result } from './services/loto6Data';
+import Income from './pages/Income';
 
 type Page =
   | 'home'
@@ -46,7 +47,7 @@ function App() {
         return <DrawResults />;
 
       case 'income':
-        return <h2>収支</h2>;
+        return <Income />;
 
       case 'prediction':
         return <h2>予想</h2>;
