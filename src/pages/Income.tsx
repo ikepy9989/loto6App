@@ -40,6 +40,11 @@ function Income() {
 
   const totalIncome = totalPrizeAmount - totalPurchaseAmount;
 
+  const purchaseCount = purchases.length;
+  const winCount = purchases.filter((purchase) => purchase.prize_amount > 0).length;
+  
+
+
   return (
     <div>
       <h2>収支</h2>
@@ -51,6 +56,8 @@ function Income() {
           <p>累計購入額：{totalPurchaseAmount.toLocaleString()}円</p>
           <p>累計当選額：{totalPrizeAmount.toLocaleString()}円</p>
           <p>累計収支：{totalIncome.toLocaleString()}円</p>
+          <p>購入回数：{purchaseCount.toLocaleString()}回</p>
+          <p>当選回数：{winCount.toLocaleString()}回</p>
         </>
       )}
     </div>

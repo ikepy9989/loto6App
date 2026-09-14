@@ -81,7 +81,6 @@ export const styles: Record<string, CSSProperties> = {
   },
 
   td: {
-    /*maxWidth: '70px',*/
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
